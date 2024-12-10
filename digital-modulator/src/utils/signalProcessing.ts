@@ -69,6 +69,8 @@ export async function processSignal(pyodide: PyodideInterface, message: string, 
   try {
     const result = await pyodide.runPythonAsync(`
       import json
+      from numpy.fft import fft
+      from numpy import hanning
       
       def process_message(msg, noise_voltage):
         try:
@@ -95,6 +97,25 @@ export async function processSignal(pyodide: PyodideInterface, message: string, 
           symbol_noise = noise_voltage * (np.random.normal(0, 1, len(symbols)) + 1j * np.random.normal(0, 1, len(symbols)))
           noisy_symbols = np.array(symbols) + symbol_noise
           
+          # Calculate spectrogram
+          nfft = 256
+          noverlap = nfft // 2
+          window = hanning(nfft)
+          
+          # Prepare signal
+          signal = waveform
+          nseg = (len(signal) - noverlap) // (nfft - noverlap)
+          
+          # Calculate spectrogram
+          spect = []
+          for i in range(nseg):
+              start = i * (nfft - noverlap)
+              segment = signal[start:start + nfft]
+              windowed = segment * window
+              spectrum = fft(windowed)
+              power = 20 * np.log10(np.abs(spectrum[:nfft//2]))
+              spect.append(power.tolist())
+          
           result_dict = {
             'waveform': {
               'real': np.real(noisy_waveform).tolist(),
@@ -103,6 +124,10 @@ export async function processSignal(pyodide: PyodideInterface, message: string, 
             'constellation': {
               'real': np.real(noisy_symbols).tolist(),
               'imag': np.imag(noisy_symbols).tolist()
+            },
+            'spectrogram': {
+              'data': spect,
+              'freqs': np.linspace(0, 0.5, nfft//2).tolist()
             },
             'rrc': rrc
           }
