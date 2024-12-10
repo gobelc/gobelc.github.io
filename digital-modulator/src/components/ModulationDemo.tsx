@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Controls } from './Controls';
 import { Constellation } from './Constellation';
 import { Spectrogram } from './Spectrogram';
 import { initializePython } from '../utils/pythonInitializer';
 import { processSignal } from '../utils/signalProcessing';
+import { WaveformDisplay } from './WaveformDisplay';
 
 export function ModulationDemo() {
   const [message, setMessage] = useState('test');
   const [noiseLevel, setNoiseLevel] = useState(0);
-  const [waveform, setWaveform] = useState(null);
   const [constellation, setConstellation] = useState(null);
   const [spectrogram, setSpectrogram] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [waveform, setWaveform] = useState(null);
 
   const handleModulate = async () => {
     setProcessing(true);
@@ -37,6 +38,7 @@ export function ModulationDemo() {
         onModulate={handleModulate}
         disabled={processing}
       />
+      {waveform && <WaveformDisplay data={waveform} />}
       {constellation && <Constellation data={constellation} />}
       {spectrogram && <Spectrogram data={spectrogram} />}
     </div>
