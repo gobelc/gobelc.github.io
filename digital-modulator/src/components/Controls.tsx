@@ -1,4 +1,3 @@
-import React from 'react';
 import { Slider, TextField, Box, Button } from '@mui/material';
 
 interface ControlsProps {
@@ -7,6 +6,8 @@ interface ControlsProps {
   onMessageChange: (message: string) => void;
   onNoiseLevelChange: (level: number) => void;
   onModulate: () => void;
+  disabled?: boolean;  // Add this line
+
 }
 
 export function Controls({ message, noiseLevel, onMessageChange, onNoiseLevelChange, onModulate }: ControlsProps) {
