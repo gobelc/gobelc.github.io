@@ -6,6 +6,7 @@ import { Controls } from './Controls';
 import { WaveformPlot } from './WaveformPlot';
 import { Constellation } from './Constellation';
 import { Box, CircularProgress, Alert } from '@mui/material';
+import { Spectrogram } from './Spectrogram';
 
 export const ModulationDemo = () => {
   const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);
@@ -94,6 +95,7 @@ export const ModulationDemo = () => {
         <>
           <WaveformPlot data={waveformData} />
           <Constellation data={constellationData} />
+          <Spectrogram data={waveformData} />
         </>
       )}
     </Box>
